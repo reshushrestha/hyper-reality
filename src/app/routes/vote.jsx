@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Stack, Typography } from '@mui/material'
 import { CenteredPage } from '../../components/layout/centered-page.jsx'
@@ -6,6 +6,10 @@ import { voterStorage } from '../../features/voters/utils/voter-storage.js'
 import { useActiveQuestion } from '../../features/questions/hooks/use-active-question.js'
 import { useCastVote } from '../../features/voting/hooks/use-cast-vote.js'
 import { VoteOptions } from '../../features/voting/components/vote-options.jsx'
+import { closeQuestion } from '../../features/questions/api/close-question.js'
+
+import Timer from '../../components/timer.jsx'
+import { useQuestionTimer } from '../../features/questions/hooks/use-question-timer.js' 
 
 export const VoteRoute = () => {
   const navigate = useNavigate()
@@ -19,7 +23,13 @@ export const VoteRoute = () => {
   const { myVoteOptionId, submitting, castVote } = useCastVote({
     questionId: question?.id,
     voterId,
-  })
+  });
+
+  const { secondsLeft, running } = useQuestionTimer(question?.id)
+
+  // const onTimer = async () => {
+  //   // 
+  // };
 
   if (!voterId) return null
 
@@ -51,6 +61,12 @@ export const VoteRoute = () => {
           <Typography variant="overline" fontWeight={600}>
             Live question
           </Typography>
+
+          {/* {!!question?.timer_started && (
+            <Timer seconds={15} onComplete={() => onTimer()} />
+          )} */}
+          <Timer secondsLeft={running ? secondsLeft : 15} size="large" />
+
           <Typography variant="h5" sx={{ lineHeight: 1.25 }}>
             {question.question_text}
           </Typography>
@@ -61,6 +77,7 @@ export const VoteRoute = () => {
           myVoteOptionId={myVoteOptionId}
           submitting={submitting}
           onVote={castVote}
+          readonly={!running}
         />
       </Stack>
     </CenteredPage>

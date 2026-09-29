@@ -9,6 +9,7 @@ export const useActiveQuestion = () => {
 
   const refetch = useCallback(async () => {
     const { question, options } = await getActiveQuestion()
+    
     setQuestion(question)
     setOptions(options)
     setLoading(false)

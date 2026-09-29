@@ -3,7 +3,7 @@ import { supabase } from '../../../lib/supabaseClient.js'
 export const getActiveQuestion = async () => {
   const { data: question } = await supabase
     .from('questions')
-    .select('id, question_text, status')
+    .select('id, question_text, status, timer_started')
     .eq('status', 'active')
     .maybeSingle()
 
