@@ -1,7 +1,7 @@
 import { Stack, Paper, Typography } from '@mui/material'
 import CheckIcon from '@mui/icons-material/Check'
 
-export const VoteOptions = ({ options, myVoteOptionId, submitting, onVote }) => (
+export const VoteOptions = ({ options, myVoteOptionId, submitting, onVote, readonly = false }) => (
   <Stack spacing={1.5}>
     {options.map((option) => {
       const isMine = myVoteOptionId === option.id
@@ -12,7 +12,7 @@ export const VoteOptions = ({ options, myVoteOptionId, submitting, onVote }) => 
           key={option.id}
           component="button"
           onClick={() => onVote(option.id)}
-          disabled={isLocked || submitting}
+          disabled={isLocked || submitting || readonly}
           elevation={0}
           sx={{
             display: 'flex',

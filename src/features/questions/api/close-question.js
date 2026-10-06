@@ -1,8 +1,8 @@
 import { supabase } from '../../../lib/supabaseClient.js'
 
 export const closeQuestion = async (questionId) => {
-  await supabase
+  return await supabase
     .from('questions')
-    .update({ status: 'closed', closed_at: new Date().toISOString() })
+    .update({ status: 'closed', timer_started: false, closed_at: new Date().toISOString() })
     .eq('id', questionId)
 }
