@@ -29,7 +29,7 @@ const AdminDashboard = () => {
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', py: 6 }}>
       <Container maxWidth="sm">
         <Stack direction="row" justifyContent="space-between" alignItems="flex-end" spacing={1} sx={{ mb: 4 }}>
-          <Typography variant="h4">Questions</Typography>
+          <Typography variant="h4" component="h1"> Admin:Questions for Voting</Typography>
           <Button variant="outlined" color="primary" onClick={() => setShowQr((v) => !v)}>
             {showQr ? 'Hide join QR' : 'Show join QR'}
           </Button>
@@ -40,8 +40,10 @@ const AdminDashboard = () => {
 
         {showQr && <JoinQrCode />}
 
+<Typography variant="h5" component="h2">Create a New Question </Typography>
         <QuestionForm nextDisplayOrder={questions.length} />
-        <QuestionList questions={questions} />
+        <Typography variant="h5" component="h2">Drafted and Live Questions</Typography>
+          <QuestionList questions={questions} />
       </Container>
     </Box>
   )
