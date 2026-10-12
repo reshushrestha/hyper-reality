@@ -39,7 +39,7 @@ export const VoteOptions = ({ options, myVoteOptionId, submitting, onVote, reado
       )
     })}
     {myVoteOptionId && (
-      <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+      <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }} role="status">
         Your vote is in. Thanks for weighing in.
       </Typography>
     )}

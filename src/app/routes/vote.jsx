@@ -36,7 +36,7 @@ export const VoteRoute = () => {
   if (loading) {
     return (
       <CenteredPage>
-        <Typography variant="h5">Loading…</Typography>
+        <Typography variant="h5" component="h1">Loading…</Typography>
       </CenteredPage>
     )
   }
@@ -48,7 +48,7 @@ export const VoteRoute = () => {
           <Typography variant="overline" fontWeight={600}>
             Signed in as {voterStorage.getName() || 'you'}
           </Typography>
-          <Typography variant="h4">Waiting for the next question</Typography>
+          <Typography variant="h4" component="h2">Waiting for the next question</Typography>
         </Stack>
       </CenteredPage>
     )
@@ -58,7 +58,7 @@ export const VoteRoute = () => {
     <CenteredPage maxWidth={480}>
       <Stack spacing={3}>
         <Stack spacing={1}>
-          <Typography variant="overline" fontWeight={600}>
+          <Typography variant="overline" fontWeight={600} component="h1">
             Live question
           </Typography>
 
@@ -67,7 +67,7 @@ export const VoteRoute = () => {
           )} */}
           <Timer secondsLeft={running ? secondsLeft : 15} size="large" />
 
-          <Typography variant="h5" sx={{ lineHeight: 1.25 }}>
+          <Typography variant="h5" sx={{ lineHeight: 1.25 }} component="h2">
             {question.question_text}
           </Typography>
         </Stack>
