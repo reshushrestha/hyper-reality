@@ -3,7 +3,10 @@ import { supabase } from '../../../lib/supabaseClient.js'
 export const createQuestion = async ({ questionText, options, displayOrder }) => {
   const { data: question, error } = await supabase
     .from('questions')
-    .insert({ question_text: questionText, display_order: displayOrder })
+    .insert({ 
+      question_text: questionText,
+      display_order: displayOrder 
+    })
     .select('id')
     .single()
 
@@ -14,6 +17,7 @@ export const createQuestion = async ({ questionText, options, displayOrder }) =>
       question_id: question.id,
       option_text: optionText,
       display_order: index,
+      video_url: option.videoUrl || null,
     }))
   )
 

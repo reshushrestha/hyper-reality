@@ -1,12 +1,10 @@
 import { supabase } from '../../../lib/supabaseClient.js'
 
 export const getMyVote = async ({ questionId, voterId }) => {
-  const { data } = await supabase
-    .from('votes')
-    .select('option_id')
-    .eq('question_id', questionId)
-    .eq('voter_id', voterId)
-    .maybeSingle()
-
-  return data?.option_id ?? null
+  const { data, error } = await supabase.rpc('get_my_vote', {
+    p_question_id: questionId,
+    p_voter_id: voterId,
+  })
+  if (error) throw error
+  return data ?? null
 }

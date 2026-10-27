@@ -3,29 +3,29 @@ import { supabase } from '../../../lib/supabaseClient.js'
 import { getQuestions } from '../api/get-questions.js'
 
 export const useQuestions = () => {
-  const [questions, setQuestions] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [state, setState] = useState({ questions: [], loading: true, error: '' })
 
   const refetch = useCallback(async () => {
-    const data = await getQuestions()
-    setQuestions(data)
-    setLoading(false)
+    try {
+      setState({ questions: await getQuestions(), loading: false, error: '' })
+    } catch (err) {
+      setState((prev) => ({ ...prev, loading: false, error: err.message }))
+    }
   }, [])
 
   useEffect(() => {
-    refetch()
+    let cancelled = false
+    getQuestions()
+      .then((questions) => {
+        if (!cancelled) setState({ questions, loading: false, error: '' })
+      })
+      .catch((err) => {
+        if (!cancelled) setState((prev) => ({ ...prev, loading: false, error: err.message }))
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
-    const channel = supabase
-      .channel('admin-questions-list')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'questions' },
-        refetch
-      )
-      .subscribe()
-
-    return () => supabase.removeChannel(channel)
-  }, [refetch])
-
-  return { questions, loading, refetch }
+  return { ...state, refetch }
 }

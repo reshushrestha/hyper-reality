@@ -2,32 +2,53 @@ import { useEffect, useState } from 'react'
 import { getMyVote } from '../api/get-my-vote.js'
 import { castVote as castVoteRequest } from '../api/cast-vote.js'
 
-export const useCastVote = ({ questionId, voterId }) => {
-  const [myVoteOptionId, setMyVoteOptionId] = useState(null)
+export const useCastVote = ({ questionId, voterId, onInvalidVoter }) => {
+  //const [myVoteOptionId, setMyVoteOptionId] = useState(null)
+  const key = questionId && voterId ? `${questionId}:${voterId}` : null
+  const [vote, setVote] = useState({ key: null, optionId: null })
+  const [problem, setProblem] = useState({ key: null, message: '' })
   const [submitting, setSubmitting] = useState(false)
 
   useEffect(() => {
-    if (!questionId || !voterId) {
-      setMyVoteOptionId(null)
-      return
+    if (!key) return
+    let cancelled = false
+    getMyVote({ questionId, voterId })
+      .then((optionId) => {
+        if (!cancelled && optionId) setVote({ key, optionId })
+      })
+      .catch(() => {})
+    return () => {
+      cancelled = true
     }
-    getMyVote({ questionId, voterId }).then(setMyVoteOptionId)
-  }, [questionId, voterId])
+  }, [key, questionId, voterId])
+
+  const myVoteOptionId = vote.key === key ? vote.optionId : null
+  const error = problem.key === key ? problem.message : ''
 
   const castVote = async (optionId) => {
-    if (!questionId || submitting || myVoteOptionId) return
+    if (!key || submitting || myVoteOptionId) return
     setSubmitting(true)
-    setMyVoteOptionId(optionId) // optimistic
+    setProblem({ key, message: '' })
+    setVote({ key, optionId }) // optimistic
 
-    const { error } = await castVoteRequest({ questionId, optionId, voterId })
-
-    if (error) {
-      // most likely a vote was already cast from another tab/device
-      const existing = await getMyVote({ questionId, voterId })
-      setMyVoteOptionId(existing)
+    try {
+      const result = await castVoteRequest({ questionId, optionId, voterId })
+      if (result === 'closed') {
+        setVote({ key, optionId: null })
+        setProblem({ key, message: 'Voting has just closed.' })
+      } else if (result === 'invalid') {
+        setVote({ key, optionId: null })
+        onInvalidVoter?.()
+      } else if (result === 'already_voted') {
+        setVote({ key, optionId: await getMyVote({ questionId, voterId }) })
+      }
+    } catch {
+      setVote({ key, optionId: null })
+      setProblem({ key, message: "Couldn't send your vote. Try again." })
+    } finally {
+      setSubmitting(false)
     }
-    setSubmitting(false)
   }
 
-  return { myVoteOptionId, submitting, castVote }
+  return { myVoteOptionId, submitting, error, castVote }
 }
