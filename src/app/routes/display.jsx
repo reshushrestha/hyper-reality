@@ -18,6 +18,5 @@ export const DisplayRoute = () => {
       />
     </CenteredPage>
   ) : (
-    <WaitingScreen />
-  )
+<video src="https://pub-99a37e889f9845efb74934ef2022d3a6.r2.dev/1005.mp4" autoPlay loop muted playsInline controls style={{ width: '100%' }} />  )
 }
